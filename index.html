@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>API Visualizer</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+  </head>
+  <body>
+    <!-- Page Container For All Content -->
+    <div class="container-fluid vh-100 bg-secondary text-light">
+
+      <!-- Main Title Row -->
+      <div class="row h-25">
+        <div class="col d-flex justify-content-center align-items-center border">
+          <h1>API Visualizer</h1>
+        </div>
+      </div>
+
+      <!-- API Search/Choose Tool Row -->
+      <div class="row h-25">
+        <div class="col col-md-10 col-lg-8 mx-auto h-100 rounded bg-primary">
+
+          <!-- Top Row of Search Tool -->
+          <div id="search" class="row">
+
+            <!-- Search Field -->
+            <div class="col">
+              <div class="input-group mb-3">
+                <span class="input-group-text" id="basic-addon1">
+                  <i class="bi-search"></i>
+                </span>
+                <input type="text" class="form-control" placeholder="Search">
+              </div>
+            </div>
+
+            <!-- Options Dropdown -->
+            <div id="view-by" class="col">
+              <div class="input-group mb-3">
+                <label class="input-group-text" for="inputGroupSelect01">Options</label>
+                <select class="form-select" id="inputGroupSelect01">
+                  <option selected>Choose...</option>
+                  <option value="1">One</option>
+                  <option value="2">Two</option>
+                  <option value="3">Three</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Fetch Button -->
+            <div class="col">
+              <button id="fetch-btn" class="btn btn-light w-100" type="button">Fetch</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Content Row -->
+      <div class="row h-50">
+        <div id="content" class="col"></div>
+      </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+    <script src="index.js"></script>
+  </body>
+</html>
