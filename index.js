@@ -2,9 +2,9 @@ const options = {
   method: 'GET', 
   headers: { 'Content-Type': 'application/json;charset=utf-8' }, 
 }
-const url = 'https://corsproxy.io/?' + encodeURIComponent('https://cat-fact.herokuapp.com/facts');
 const url1 = 'https://api.publicapis.org/entries';
-const url2 = 'https://pokeapi.co/api/v2/pokemon/1';
+const url2 = 'https://apps-nefsc.fisheries.noaa.gov/NEMIS/index.php/api/mul_detail/test';
+const url = 'https://corsproxy.io/?' + encodeURIComponent(url2);
 const fetchBtn = document.querySelector('#fetch-btn');
 fetchBtn.addEventListener('click', fetchApi)
 
