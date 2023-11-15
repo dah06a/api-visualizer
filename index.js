@@ -1,7 +1,15 @@
-const options = { 
-  method: 'GET', 
-  headers: { 'Content-Type': 'application/json;charset=utf-8' }, 
-}
+//When the page loads get a list of filtered free api links
+//Make an API search tool that loads the list
+//Allow searching by string, or looking by category, or by all
+//Make separate section for entering and fetching an api url
+//Should show errors if they occur in red text below the input element
+//Create large function to parse any data, create ui elements, and add to rest of page
+  //Make a card for each element
+  //Check for strings/titles
+  //Check for links
+  //Check for lists
+  //Check for images
+
 const url1 = 'https://api.publicapis.org/entries';
 const url2 = 'https://apps-nefsc.fisheries.noaa.gov/NEMIS/index.php/api/mul_detail/test';
 const url3 = 'https://random-d.uk/api/v2/random';
