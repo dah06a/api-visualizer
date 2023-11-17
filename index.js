@@ -10,42 +10,45 @@
   //Check for lists
   //Check for images
 
-const url1 = 'https://api.publicapis.org/entries';
-const url2 = 'https://apps-nefsc.fisheries.noaa.gov/NEMIS/index.php/api/mul_detail/test';
-const url3 = 'https://random-d.uk/api/v2/random';
-const url = 'https://corsproxy.io/?' + encodeURIComponent(url3);
-const fetchBtn = document.querySelector('#fetch-btn');
-fetchBtn.addEventListener('click', () => fetchApi(url))
+import apiList from './apiList.json' assert { type: 'json' };
+
+  const apiSearch = document.querySelector('#apiSearch');
+  const authCheck = document.querySelector('#authCheck');
+  const corsCheck = document.querySelector('#corsCheck');
+
+  apiSearch.addEventListener('keydown', displayApiList);
+  authCheck.addEventListener('click', displayApiList);
+  corsCheck.addEventListener('click', displayApiList);
+
+function displayApiList() {
+  const search = apiSearch.value;
+  const auth = authCheck.checked;
+  const cors = corsCheck.checked;
+
+  const updatedApiList = apiList.filter(api => {
+    let includeApi = true;
+    if (
+      search && !api.API.includes(search) ||
+      !auth && api.Auth ||
+      !cors && api.Cors === 'yes'
+    ) {
+      includeApi = false;
+    }
+    return includeApi;
+  });
+
+  console.log(updatedApiList);
+}
 
 async function fetchApi(url) {
-  setLoading(true);
-  const corsProxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(url3);
-
+  const corsProxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(url);
   try {
     const response = await fetch(corsProxyUrl);
-    console.log(response);
-    if (!response.ok) {
-      throw new Error('Problem with fetch, received status:', response.status);
-    }
     const data = await response.json();
     console.log(data);
   } catch(err) {
     console.error(err);
-  } finally {
-    setLoading(false);
-  }
+  } 
 }
 
-function setLoading(on) {
-  if (on) {
-    console.log('Loading...');
-    const contentArea = document.querySelector('#content');
-    const loading = document.createElement('p');
-    loading.setAttribute('id', 'loading');
-    loading.textContent = 'Loading...';
-    contentArea.append(loading)
-  } else {
-    const loading = document.querySelector('#loading');
-    loading.remove();
-  }
-}
+fetchApi('https://api.publicapis.org/categories');
