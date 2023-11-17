@@ -11,24 +11,32 @@
   //Check for images
 
 import apiList from './apiList.json' assert { type: 'json' };
+import apiCategories from './apiCategories.json' assert { type: 'json' };
 
-  const apiSearch = document.querySelector('#apiSearch');
-  const authCheck = document.querySelector('#authCheck');
-  const corsCheck = document.querySelector('#corsCheck');
+const apiSearch = document.querySelector('#apiSearch');
+const authCheck = document.querySelector('#authCheck');
+const corsCheck = document.querySelector('#corsCheck');
 
-  apiSearch.addEventListener('keydown', displayApiList);
-  authCheck.addEventListener('click', displayApiList);
-  corsCheck.addEventListener('click', displayApiList);
+apiSearch.addEventListener('keyup', (e) => displayApiList(e));
+authCheck.addEventListener('click', (e) => displayApiList(e));
+corsCheck.addEventListener('click', (e) => displayApiList(e));
 
-function displayApiList() {
-  const search = apiSearch.value;
-  const auth = authCheck.checked;
-  const cors = corsCheck.checked;
+displayApiList();
+
+function displayApiList(e) {
+  const apiListRow = document.querySelector('#apiListRow');
+  while (apiListRow.firstChild) {
+    apiListRow.firstChild.remove()
+  }
+
+  const search = e && e.target.id === 'apiSearch' ? e.target.value : apiSearch.value;
+  const auth = e && e.target.id === 'authCheck' ? e.target.checked : authCheck.checked;
+  const cors = e && e.target.id === 'corsCheck' ? e.target.checked : corsCheck.checked;
 
   const updatedApiList = apiList.filter(api => {
     let includeApi = true;
     if (
-      search && !api.API.includes(search) ||
+      search && !api.API.toLocaleLowerCase().includes(search.toLocaleLowerCase()) ||
       !auth && api.Auth ||
       !cors && api.Cors === 'yes'
     ) {
@@ -38,6 +46,29 @@ function displayApiList() {
   });
 
   console.log(updatedApiList);
+  apiCategories.sort();
+  for (const category of apiCategories) {
+    const isCategoryInApiList = updatedApiList.filter(api => api.Category === category).length;
+    if (isCategoryInApiList) {
+      const categoryCol = document.createElement('div');
+      categoryCol.classList.add('col', 'border', 'rounded');
+      categoryCol.textContent = category;
+  
+      const categoryList = document.createElement('ul');
+      categoryList.setAttribute('data-categoryName', category);
+  
+      categoryCol.appendChild(categoryList);
+      apiListRow.appendChild(categoryCol);
+    }
+  }
+
+  for (const api of updatedApiList) {
+    const apiTitle = document.createElement('li');
+    apiTitle.textContent = api.API;
+    document.querySelector(`ul[data-categoryName="${api.Category}"]`).appendChild(apiTitle);
+  }
+
+
 }
 
 async function fetchApi(url) {
