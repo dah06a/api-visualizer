@@ -19,13 +19,16 @@
         </div>
       </div> 
 
+      <!-- API Search/List And Fetch Row -->
       <div class="row">
         <div class="col mx-auto">
           <div class="accordion" id="findApiParent">
+
+            <!-- Search List Accordion -->
             <div class="accordion-item bg-secondary">
               <h2 class="accordion-header">
                 <button 
-                  class="accordion-button bg-secondary text-light" 
+                  class="accordion-button collapsed bg-secondary text-light" 
                   type="button" 
                   data-bs-toggle="collapse" 
                   data-bs-target="#findApiCollapse"
@@ -60,17 +63,35 @@
                     </div>
 
                     <!-- Api List Row -->
-                    <div class="row mt-2 text-light" id="apiListRow" style="max-height: 50vh; overflow-y: scroll;">
-                      
-                    </div>
+                    <div class="row mt-2 text-light" id="apiListRow" style="max-height: 50vh; overflow-y: scroll;"></div>
 
                   </div>
                 </div>
               </div>
             </div>
+
+            <!-- Fetch Input Accordion -->
+            <div class="accordion-item bg-secondary">
+              <h2 class="accordion-header">
+                <button 
+                  class="accordion-button bg-secondary text-light" 
+                  type="button" 
+                  data-bs-toggle="collapse" 
+                  data-bs-target="#fetchApiInput"
+                >
+                  Fetch some API data!
+                </button>
+              </h2>
+              <div id="fetchApiInput" class="accordion-collapse show bg-primary" data-bs-parent="#findApiPare t">
+                <div class="accordion-body">
+                  test
+                </div>
+            </div>  
           </div>
         </div>
       </div>
+
+      <!-- Response Content Row -->
       <div class="row">
         <div id="content" class="col"></div>
       </div>
