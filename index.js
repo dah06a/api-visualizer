@@ -24,10 +24,14 @@ displayApiList();
 const fetchBtn = document.querySelector('#fetchBtn');
 fetchBtn.addEventListener('click', (e) => fetchApi(e))
 
+const statusAlert = document.querySelector('#statusAlert');
+const statusText = document.querySelector('#statusText');
+const statusIcon = document.querySelector('#statusIcon');
+
 function displayApiList(e) {
   const apiListRow = document.querySelector('#apiListRow');
   while (apiListRow.firstChild) {
-    apiListRow.firstChild.remove()
+    apiListRow.firstChild.remove();
   }
 
   const search = e && e.target.id === 'apiSearch' ? e.target.value : apiSearch.value;
@@ -88,23 +92,87 @@ function displayApiList(e) {
 
 async function fetchApi(e) {
   e.preventDefault();
-  console.log('in function');
 
   const apiUrl = document.querySelector('#apiUrl').value;
   console.log(apiUrl);
-  const corsProxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(apiUrl);
 
-  if (apiUrl.trim().length) {
+  if (checkValidUrl(apiUrl.trim())) {
+    const corsProxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(apiUrl);
     try {
       const response = await fetch(corsProxyUrl);
+      if (!response.ok) {
+        throw new Error(response.status);
+      }
       const data = await response.json();
       console.log(data);
     } catch(err) {
       console.error(err);
     } 
   } else {
-    //Warn user that there is no url to fetch
+    setWarningStatus();
   }
+}
+
+function setWarningStatus() {
+  statusAlert.className = 'alert alert-warning';
+  statusText.textContent = 'Warning - the URL provided is not valid. Please try again.';
+  clearStatusIcon();
+
+  const warningIcon = document.createElement('i');
+  warningIcon.classList.add('bi', 'bi-exclamation-triangle');
+  statusIcon.appendChild(warningIcon);
+}
+
+function setErrorStatus(errorCode) {
+  let errorMsg = '';
+  switch (errorCode) {
+    case 400:
+      errorMsg = 'there is likely something wrong with the URL for this request.';
+      break;
+    case 401:
+      errorMsg = 'there is a problem with authorization for this request.';
+      break;
+    case 403:
+      errorMsg = 'there is a problem with authentication for this request.';
+      break;
+    case 404:
+      errorMsg = 'there was nothing found for this request.';
+      break;
+    default:
+      errorMsg = 'there was an unknown problem for this request.';
+  }
+  statusAlert.className = 'alert alert-danger';
+  statusText.textContent = 'Error - ' + errorMsg;
+  clearStatusIcon();
+
+  const errorIcon = document.createElement('i');
+  errorIcon.classList.add('bi', 'bi-exclamation-octagon');
+  statusIcon.appendChild(errorIcon);
+}
+
+function setLoadingStatus() {
+  statusAlert.className = 'alert alert-primary';
+  statusText.textContent = 'Loading...';
+  clearStatusIcon();
+
+  const spinner = document.createElement('div');
+  spinner.classList.add('spinner-border', 'spinner-border-sm');
+  statusIcon.appendChild(spinner);
+}
+
+function clearStatusIcon() {
+  statusIcon.textContent = '';
+  while (statusIcon.firstChild) {
+    statusIcon.firstChild.remove();
+  }
+}
+
+function checkValidUrl(url) {
+  if (!url || url.length > 2000) {
+    return false;
+  }
+  const urlPattern = /(?:https?):\/\/(\w+:?\w*)?(\S+)(:\d+)?(\/|\/([\w#!:.?+=&%!\-\/]))?/;
+  return !!urlPattern.test(url);
 }
 
 //Create a card component
