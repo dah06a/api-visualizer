@@ -16,12 +16,13 @@ import apiCategories from './apiCategories.json' assert { type: 'json' };
 const apiSearch = document.querySelector('#apiSearch');
 const authCheck = document.querySelector('#authCheck');
 const corsCheck = document.querySelector('#corsCheck');
-
 apiSearch.addEventListener('keyup', (e) => displayApiList(e));
 authCheck.addEventListener('click', (e) => displayApiList(e));
 corsCheck.addEventListener('click', (e) => displayApiList(e));
-
 displayApiList();
+
+const fetchBtn = document.querySelector('#fetchBtn');
+fetchBtn.addEventListener('click', (e) => fetchApi(e))
 
 function displayApiList(e) {
   const apiListRow = document.querySelector('#apiListRow');
@@ -45,7 +46,6 @@ function displayApiList(e) {
     return includeApi;
   });
 
-  console.log(updatedApiList);
   apiCategories.sort();
   for (const category of apiCategories) {
     const isCategoryInApiList = updatedApiList.filter(api => api.Category === category).length;
@@ -86,15 +86,29 @@ function displayApiList(e) {
 
 }
 
-async function fetchApi(url) {
-  const corsProxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(url);
-  try {
-    const response = await fetch(corsProxyUrl);
-    const data = await response.json();
-    console.log(data);
-  } catch(err) {
-    console.error(err);
-  } 
+async function fetchApi(e) {
+  e.preventDefault();
+  console.log('in function');
+
+  const apiUrl = document.querySelector('#apiUrl').value;
+  console.log(apiUrl);
+  const corsProxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(apiUrl);
+
+  if (apiUrl.trim().length) {
+    try {
+      const response = await fetch(corsProxyUrl);
+      const data = await response.json();
+      console.log(data);
+    } catch(err) {
+      console.error(err);
+    } 
+  } else {
+    //Warn user that there is no url to fetch
+  }
 }
 
-fetchApi('https://api.publicapis.org/categories');
+//Create a card component
+//Look at top level of results - see if any is type array
+//Print out main key/values that are NOT the array
+//Then, create a sub-card or sub-section for each element in the array key/value
+//
