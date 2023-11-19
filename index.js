@@ -51,11 +51,22 @@ function displayApiList(e) {
     const isCategoryInApiList = updatedApiList.filter(api => api.Category === category).length;
     if (isCategoryInApiList) {
       const categoryCol = document.createElement('div');
-      categoryCol.classList.add('col', 'border', 'rounded');
-      categoryCol.textContent = category;
+      categoryCol.classList.add(
+        'col-12', 
+        'col-sm-6',
+        'col-md-4',
+        'border', 
+        'rounded', 
+        'py-2'
+      );
+
+      const categoryTitle = document.createElement('h5');
+      categoryTitle.textContent = category;
+      categoryCol.appendChild(categoryTitle);
   
-      const categoryList = document.createElement('ul');
+      const categoryList = document.createElement('div');
       categoryList.setAttribute('data-categoryName', category);
+      categoryList.classList.add('list-group');
   
       categoryCol.appendChild(categoryList);
       apiListRow.appendChild(categoryCol);
@@ -63,9 +74,13 @@ function displayApiList(e) {
   }
 
   for (const api of updatedApiList) {
-    const apiTitle = document.createElement('li');
-    apiTitle.textContent = api.API;
-    document.querySelector(`ul[data-categoryName="${api.Category}"]`).appendChild(apiTitle);
+    const apiItem = document.createElement('a');
+    apiItem.classList.add('list-group-item', 'list-group-item-action', 'list-group-item-dark');
+    apiItem.setAttribute('href', api.Link);
+    apiItem.setAttribute('target', '_blank');
+    apiItem.setAttribute('title', api.Description);
+    apiItem.textContent = api.API;
+    document.querySelector(`div[data-categoryName="${api.Category}"]`).appendChild(apiItem);
   }
 
 
