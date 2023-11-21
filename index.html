@@ -22,10 +22,10 @@
       <!-- API Search/List And Fetch Row -->
       <div class="row">
         <div class="col mx-auto">
-          <div class="accordion" id="findApiParent">
+          <div class="accordion" id="mainAccordionParent">
 
             <!-- Search List Accordion -->
-            <div class="accordion-item bg-secondary">
+            <div class="accordion-item">
               <h2 class="accordion-header">
                 <button 
                   class="accordion-button collapsed bg-secondary text-light" 
@@ -82,7 +82,7 @@
                   Fetch some API data!
                 </button>
               </h2>
-              <div id="fetchApiInput" class="accordion-collapse show bg-secondary" data-bs-parent="#findApiParent">
+              <div id="fetchApiInput" class="accordion-collapse show bg-secondary" data-bs-parent="#mainAccordionParent">
                 <div class="accordion-body">
                   <div class="container-fluid">
 
@@ -116,13 +116,27 @@
                 </div>
               </div>
             </div>  
+
+            <!-- Content Response Accordion -->
+            <div class="accordion-item">
+              <h2 class="accordion-header">
+                <button 
+                  class="accordion-button bg-secondary text-light" 
+                  type="button" 
+                  data-bs-toggle="collapse" 
+                  data-bs-target="#contentResponse"
+                >
+                  API Response Content...
+                </button>
+              </h2>
+              <div id="contentResponse" class="accordion-collapse show bg-secondary" data-bs-parent="#mainAccordionParent">
+                <div class="accordion-body">
+                  <div class="container-fluid text-light" id="contentArea"></div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-
-      <!-- Response Content Row -->
-      <div class="row">
-        <div id="content" class="col"></div>
       </div>
     </div>
 

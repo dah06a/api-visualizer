@@ -1,15 +1,3 @@
-//When the page loads get a list of filtered free api links
-//Make an API search tool that loads the list
-//Allow searching by string, or looking by category, or by all
-//Make separate section for entering and fetching an api url
-//Should show errors if they occur in red text below the input element
-//Create large function to parse any data, create ui elements, and add to rest of page
-  //Make a card for each element
-  //Check for strings/titles
-  //Check for links
-  //Check for lists
-  //Check for images
-
 import apiList from './apiList.json' assert { type: 'json' };
 import apiCategories from './apiCategories.json' assert { type: 'json' };
 
@@ -27,6 +15,7 @@ fetchBtn.addEventListener('click', (e) => fetchApi(e))
 const statusAlert = document.querySelector('#statusAlert');
 const statusText = document.querySelector('#statusText');
 const statusIcon = document.querySelector('#statusIcon');
+const contentArea = document.querySelector('#contentArea');
 
 function displayApiList(e) {
   const apiListRow = document.querySelector('#apiListRow');
@@ -92,6 +81,8 @@ function displayApiList(e) {
 
 async function fetchApi(e) {
   e.preventDefault();
+  setLoadingStatus();
+  removeAllContent();
 
   const apiUrl = document.querySelector('#apiUrl').value;
   console.log(apiUrl);
@@ -105,12 +96,25 @@ async function fetchApi(e) {
       }
       const data = await response.json();
       console.log(data);
-    } catch(err) {
-      console.error(err);
+      displayApiData(data, contentArea);
+      setSuccessStatus();
+    } catch(errStatus) {
+      console.error(errStatus);
+      setErrorStatus(errStatus);
     } 
   } else {
     setWarningStatus();
   }
+}
+
+function setSuccessStatus() {
+  statusAlert.className = 'alert alert-success';
+  statusText.textContent = 'Success - the API responded with data!';
+  clearStatusIcon();
+
+  const successIcon = document.createElement('i');
+  successIcon.classList.add('bi', 'bi-check-circle');
+  statusIcon.appendChild(successIcon);
 }
 
 function setWarningStatus() {
@@ -175,8 +179,41 @@ function checkValidUrl(url) {
   return !!urlPattern.test(url);
 }
 
-//Create a card component
-//Look at top level of results - see if any is type array
-//Print out main key/values that are NOT the array
-//Then, create a sub-card or sub-section for each element in the array key/value
-//
+function displayApiData(data, parentContainer) {
+  for (const [key, val] of Object.entries(data)) {
+    const item = document.createElement('div');
+
+    if (val && typeof val === 'object') {
+      const valIsArray = Array.isArray(val);
+      item.classList.add('row', 'my-2', 'border');
+
+      const itemTitleArea = document.createElement('div');
+      const itemTitle = document.createElement(valIsArray ? 'h3' : 'h5');
+      itemTitle.textContent = key + ':';
+
+      itemTitleArea.appendChild(itemTitle);
+      item.appendChild(itemTitleArea);
+      parentContainer.appendChild(item);
+
+      if (valIsArray) {
+        for (const newKey of val) {
+          itemTitleArea.classList.add('col-12');
+          displayApiData(newKey, item);
+        }
+      } else {
+        itemTitleArea.classList.add('col-11', 'offset-1');
+        displayApiData(val, item);
+      }
+    } else {
+      item.classList.add('col', 'my-1', 'offset-2');
+      item.textContent = key + ': ' + val;
+      parentContainer.appendChild(item);
+    }
+  }
+}
+
+function removeAllContent() {
+  while (contentArea.firstChild) {
+    contentArea.firstChild.remove();
+  }
+}
