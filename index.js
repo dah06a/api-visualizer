@@ -185,8 +185,6 @@ function displayApiData(data, parentContainer) {
 
     if (val && typeof val === 'object') {
       const valIsArray = Array.isArray(val);
-      item.classList.add('row', 'my-2', 'border');
-
       const itemTitleArea = document.createElement('div');
       const itemTitle = document.createElement(valIsArray ? 'h3' : 'h5');
       itemTitle.textContent = key + ':';
@@ -197,12 +195,18 @@ function displayApiData(data, parentContainer) {
 
       if (valIsArray) {
         for (const newKey of val) {
+          item.classList.add('row', 'my-2', 'border', 'rounded');
           itemTitleArea.classList.add('col-12');
           displayApiData(newKey, item);
         }
       } else {
-        itemTitleArea.classList.add('col-11', 'offset-1');
-        displayApiData(val, item);
+        item.classList.add('col-12', 'my-2', 'border', 'rounded');
+        itemTitleArea.classList.add('row');
+
+        const subItem = document.createElement('div');
+        subItem.classList.add('col-11', 'offset-1');
+        item.appendChild(subItem);
+        displayApiData(val, subItem);
       }
     } else {
       item.classList.add('col', 'my-1', 'offset-2');
