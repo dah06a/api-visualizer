@@ -80,7 +80,8 @@ function displayApiList(e) {
 }
 
 async function fetchApi(e) {
-  e.preventDefault();
+  //REMOVE THIS IF STATEMENT AFTER TESTING
+  if (e) e.preventDefault();
   setLoadingStatus();
   removeAllContent();
 
@@ -182,36 +183,49 @@ function checkValidUrl(url) {
 function displayApiData(data, parentContainer) {
   for (const [key, val] of Object.entries(data)) {
     const item = document.createElement('div');
+    item.classList.add('border', 'rounded');
+    item.classList.add(parentContainer.classList.contains('row') ? 'col' : 'row');
+    parentContainer.appendChild(item);
 
     if (val && typeof val === 'object') {
-      const valIsArray = Array.isArray(val);
-      const itemTitleArea = document.createElement('div');
-      const itemTitle = document.createElement(valIsArray ? 'h3' : 'h5');
-      itemTitle.textContent = key + ':';
+      const itemTitle = document.createElement('div');
+      if (item.classList.contains('row')) {
+        itemTitle.classList.add('col-12');
+        itemTitle.textContent = key + ':';
+      } else {
+        const itemTitleSubContainer = document.createElement('div');
+        itemTitleSubContainer.classList.add('row');
+        const itemSubTitle = document.createElement('div');
+        itemSubTitle.classList.add('col-12');
+        itemSubTitle.textContent = key + ':';
+        itemTitleSubContainer.appendChild(itemSubTitle);
+        itemTitle.appendChild(itemTitleSubContainer);
+      }
+      item.appendChild(itemTitle);
 
-      itemTitleArea.appendChild(itemTitle);
-      item.appendChild(itemTitleArea);
-      parentContainer.appendChild(item);
-
-      if (valIsArray) {
+      if (Array.isArray(val)) {
         for (const newKey of val) {
-          item.classList.add('row', 'my-2', 'border', 'rounded');
-          itemTitleArea.classList.add('col-12');
-          displayApiData(newKey, item);
+          if (item.classList.contains('row')) {
+            const subItem = document.createElement('div');
+            subItem.classList.add('col', 'border', 'rounded');
+            item.appendChild(subItem);
+            displayApiData(newKey, subItem);
+          } else {
+            displayApiData(newKey, item);
+          }
         }
       } else {
-        item.classList.add('col-12', 'my-2', 'border', 'rounded');
-        itemTitleArea.classList.add('row');
-
-        const subItem = document.createElement('div');
-        subItem.classList.add('col-11', 'offset-1');
-        item.appendChild(subItem);
-        displayApiData(val, subItem);
+        displayApiData(val, item);
       }
     } else {
-      item.classList.add('col', 'my-1', 'offset-2');
-      item.textContent = key + ': ' + val;
-      parentContainer.appendChild(item);
+      if (item.classList.contains('row')) {
+        const subItem = document.createElement('div');
+        subItem.classList.add('col', 'border', 'rounded');
+        subItem.textContent = key + ': ' + val;
+        item.appendChild(subItem);
+      } else {
+        item.textContent = key + ': ' + val;
+      }
     }
   }
 }
@@ -221,3 +235,6 @@ function removeAllContent() {
     contentArea.firstChild.remove();
   }
 }
+
+document.querySelector('#apiUrl').value = 'https://pokeapi.co/api/v2/pokemon/1';
+fetchApi();
