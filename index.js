@@ -120,13 +120,13 @@ function displayApiData(data, parentContainer) {
 
       //Main Item Setup
       const item = document.createElement('div');
-      item.classList.add('border', 'border-dark', 'rounded', 'm-2', 'bg-dark-subtle');
+      item.classList.add('border', 'border-dark', 'border-2', 'rounded', 'm-2', 'bg-dark-subtle');
       item.classList.add(parentContainer.classList.contains('row') ? 'col' : 'row');
       parentContainer.appendChild(item);
   
       //Main Object Case 
       if (val && typeof val === 'object') {
-        item.classList.add('p-2', 'border-2');
+        item.classList.add('p-2', 'border-3');
         const itemTitle = document.createElement('div');
         itemTitle.classList.add('fw-bold', 'fs-3');
         item.appendChild(itemTitle);
