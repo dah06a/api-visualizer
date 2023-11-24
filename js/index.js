@@ -1,5 +1,5 @@
-import apiList from './apiList.json' assert { type: 'json' };
-import apiCategories from './apiCategories.json' assert { type: 'json' };
+import { apiList } from '../apiData/apiList.js';
+import { apiCategories } from '../apiData/apiCategories.js';
 
 const apiSearch = document.querySelector('#apiSearch');
 const authCheck = document.querySelector('#authCheck');

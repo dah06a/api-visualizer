@@ -1,4 +1,4 @@
-[
+export const apiCategories = [
   "Animals",
   "Anime",
   "Anti-Malware",

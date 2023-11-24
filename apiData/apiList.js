@@ -1,4 +1,4 @@
-[
+export const apiList = [
   {
       "API": "AdoptAPet",
       "Description": "Resource to help get pets adopted",
