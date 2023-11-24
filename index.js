@@ -107,6 +107,125 @@ async function fetchApi(e) {
   }
 }
 
+function displayApiData(data, parentContainer) {
+  // Prevent enumerating non-objects, like strings
+  if (typeof data !== 'object') {
+    const dataContent = document.createElement('span');
+    dataContent.textContent = data.toString();
+    parentContainer.appendChild(dataContent);
+  } else {
+
+    // Otherwise, iterate over data object
+    for (const [key, val] of Object.entries(data)) {
+
+      //Main Item Setup
+      const item = document.createElement('div');
+      item.classList.add('border', 'border-dark', 'border-2', 'rounded', 'm-2', 'bg-dark-subtle');
+      item.classList.add(parentContainer.classList.contains('row') ? 'col' : 'row');
+      parentContainer.appendChild(item);
+  
+      //Main Object Case 
+      if (val && typeof val === 'object') {
+        item.classList.add('p-2', 'border-3');
+        const itemTitle = document.createElement('div');
+        itemTitle.classList.add('fw-bold', 'fs-3');
+        item.appendChild(itemTitle);
+
+        // Handle row/col nesting if necessary
+        if (item.classList.contains('col')) {
+          itemTitle.classList.add('row');
+          const itemSubTitle = document.createElement('div');
+          itemSubTitle.classList.add('col-12');
+          itemSubTitle.textContent = key + ': ';
+          itemTitle.appendChild(itemSubTitle);
+        } else {
+          itemTitle.classList.add('col-12');
+          itemTitle.textContent = key + ': ';
+        }
+  
+        // Main Array Case
+        if (!Array.isArray(val)) {
+          displayApiData(val, item);  // recursive call if not array
+        } else {
+
+          //Check for empty array
+          if (!val.length) {
+          const  valContent = document.createElement('span');
+          valContent.classList.add('bg-secondary', 'text-light', 'px-2', 'rounded');
+          valContent.textContent = 'NULL';
+          itemTitle.appendChild(valContent);
+          } else {
+
+            // Iterate over the array value
+            for (const newKey of val) {
+
+              // Handle row/col nesting and call recursive function
+              if (item.classList.contains('row')) {
+                const subItem = document.createElement('div');
+                subItem.classList.add('col', 'border', 'border-3', 'border-dark', 'rounded');
+                item.appendChild(subItem);
+                displayApiData(newKey, subItem);
+              } else {
+                displayApiData(newKey, item);
+              }
+            }
+          }
+        }
+
+        // Main Non-Object Case
+      } else {
+        const keyText = document.createElement('span');
+        keyText.classList.add('fw-bold');
+        keyText.textContent = key + ' = ';
+  
+        // Check value cases
+        let valContent;
+
+        // Empty Value
+        if (val === null || val === undefined || val === '') {
+          valContent = document.createElement('span');
+          valContent.classList.add('bg-secondary', 'text-light', 'px-2', 'rounded')
+          valContent.textContent = 'NULL';
+
+          // URL Value
+        } else if (checkValidUrl(val)) {
+
+          // Image
+          if (checkValidImg(val)) {
+            valContent = document.createElement('img');
+            valContent.setAttribute('src', val);
+
+            // Link
+          } else {
+            valContent = document.createElement('a');
+            valContent.setAttribute('href', val);
+            valContent.setAttribute('target', '_blank');
+            valContent.classList.add('link-primary');
+            valContent.textContent = val;
+          }
+
+          // General Text
+        } else {
+          valContent = document.createElement('span');
+          valContent.textContent = val.toString();
+        }
+  
+        // Handle row/col nesting for non-object case
+        if (item.classList.contains('row')) {
+          const subItem = document.createElement('div');
+          subItem.classList.add('col');
+          subItem.appendChild(keyText);
+          subItem.appendChild(valContent);
+          item.appendChild(subItem);
+        } else {
+          item.appendChild(keyText);
+          item.appendChild(valContent);
+        }
+      }
+    }
+  }
+}
+
 function setSuccessStatus() {
   statusAlert.className = 'alert alert-success';
   statusText.textContent = 'Success - the API responded with data!';
@@ -179,41 +298,9 @@ function checkValidUrl(url) {
   return !!urlPattern.test(url);
 }
 
-function displayApiData(data, parentContainer) {
-  for (const [key, val] of Object.entries(data)) {
-    const item = document.createElement('div');
-
-    if (val && typeof val === 'object') {
-      const valIsArray = Array.isArray(val);
-      const itemTitleArea = document.createElement('div');
-      const itemTitle = document.createElement(valIsArray ? 'h3' : 'h5');
-      itemTitle.textContent = key + ':';
-
-      itemTitleArea.appendChild(itemTitle);
-      item.appendChild(itemTitleArea);
-      parentContainer.appendChild(item);
-
-      if (valIsArray) {
-        for (const newKey of val) {
-          item.classList.add('row', 'my-2', 'border', 'rounded');
-          itemTitleArea.classList.add('col-12');
-          displayApiData(newKey, item);
-        }
-      } else {
-        item.classList.add('col-12', 'my-2', 'border', 'rounded');
-        itemTitleArea.classList.add('row');
-
-        const subItem = document.createElement('div');
-        subItem.classList.add('col-11', 'offset-1');
-        item.appendChild(subItem);
-        displayApiData(val, subItem);
-      }
-    } else {
-      item.classList.add('col', 'my-1', 'offset-2');
-      item.textContent = key + ': ' + val;
-      parentContainer.appendChild(item);
-    }
-  }
+function checkValidImg(url) {
+  const urlImgPattern = /\.(apng|avif|gif|jpg|jpeg|jfif|pjpeg|pjp|png|svg|webp)$/;
+  return urlImgPattern.test(url);
 }
 
 function removeAllContent() {
