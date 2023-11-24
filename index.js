@@ -107,6 +107,125 @@ async function fetchApi(e) {
   }
 }
 
+function displayApiData(data, parentContainer) {
+  // Prevent enumerating non-objects, like strings
+  if (typeof data !== 'object') {
+    const dataContent = document.createElement('span');
+    dataContent.textContent = data.toString();
+    parentContainer.appendChild(dataContent);
+  } else {
+
+    // Otherwise, iterate over data object
+    for (const [key, val] of Object.entries(data)) {
+
+      //Main Item Setup
+      const item = document.createElement('div');
+      item.classList.add('border', 'border-dark', 'rounded', 'm-2', 'bg-dark-subtle');
+      item.classList.add(parentContainer.classList.contains('row') ? 'col' : 'row');
+      parentContainer.appendChild(item);
+  
+      //Main Object Case 
+      if (val && typeof val === 'object') {
+        item.classList.add('p-2', 'border-2');
+        const itemTitle = document.createElement('div');
+        itemTitle.classList.add('fw-bold', 'fs-3');
+        item.appendChild(itemTitle);
+
+        // Handle row/col nesting if necessary
+        if (item.classList.contains('col')) {
+          itemTitle.classList.add('row');
+          const itemSubTitle = document.createElement('div');
+          itemSubTitle.classList.add('col-12');
+          itemSubTitle.textContent = key + ': ';
+          itemTitle.appendChild(itemSubTitle);
+        } else {
+          itemTitle.classList.add('col-12');
+          itemTitle.textContent = key + ': ';
+        }
+  
+        // Main Array Case
+        if (!Array.isArray(val)) {
+          displayApiData(val, item);  // recursive call if not array
+        } else {
+
+          //Check for empty array
+          if (!val.length) {
+          const  valContent = document.createElement('span');
+          valContent.classList.add('bg-secondary', 'text-light', 'px-2', 'rounded');
+          valContent.textContent = 'NULL';
+          itemTitle.appendChild(valContent);
+          } else {
+
+            // Iterate over the array value
+            for (const newKey of val) {
+
+              // Handle row/col nesting and call recursive function
+              if (item.classList.contains('row')) {
+                const subItem = document.createElement('div');
+                subItem.classList.add('col', 'border', 'border-3', 'border-dark', 'rounded');
+                item.appendChild(subItem);
+                displayApiData(newKey, subItem);
+              } else {
+                displayApiData(newKey, item);
+              }
+            }
+          }
+        }
+
+        // Main Non-Object Case
+      } else {
+        const keyText = document.createElement('span');
+        keyText.classList.add('fw-bold');
+        keyText.textContent = key + ' = ';
+  
+        // Check value cases
+        let valContent;
+
+        // Empty Value
+        if (val === null || val === undefined || val === '') {
+          valContent = document.createElement('span');
+          valContent.classList.add('bg-secondary', 'text-light', 'px-2', 'rounded')
+          valContent.textContent = 'NULL';
+
+          // URL Value
+        } else if (checkValidUrl(val)) {
+
+          // Image
+          if (checkValidImg(val)) {
+            valContent = document.createElement('img');
+            valContent.setAttribute('src', val);
+
+            // Link
+          } else {
+            valContent = document.createElement('a');
+            valContent.setAttribute('href', val);
+            valContent.setAttribute('target', '_blank');
+            valContent.classList.add('link-primary');
+            valContent.textContent = val;
+          }
+
+          // General Text
+        } else {
+          valContent = document.createElement('span');
+          valContent.textContent = val.toString();
+        }
+  
+        // Handle row/col nesting for non-object case
+        if (item.classList.contains('row')) {
+          const subItem = document.createElement('div');
+          subItem.classList.add('col');
+          subItem.appendChild(keyText);
+          subItem.appendChild(valContent);
+          item.appendChild(subItem);
+        } else {
+          item.appendChild(keyText);
+          item.appendChild(valContent);
+        }
+      }
+    }
+  }
+}
+
 function setSuccessStatus() {
   statusAlert.className = 'alert alert-success';
   statusText.textContent = 'Success - the API responded with data!';
@@ -182,93 +301,6 @@ function checkValidUrl(url) {
 function checkValidImg(url) {
   const urlImgPattern = /\.(apng|avif|gif|jpg|jpeg|jfif|pjpeg|pjp|png|svg|webp)$/;
   return urlImgPattern.test(url);
-}
-
-function displayApiData(data, parentContainer) {
-  for (const [key, val] of Object.entries(data)) {
-    const item = document.createElement('div');
-    item.classList.add('border', 'border-dark', 'rounded', 'm-2', 'bg-dark-subtle');
-    item.classList.add(parentContainer.classList.contains('row') ? 'col' : 'row');
-    parentContainer.appendChild(item);
-
-    if (val && typeof val === 'object') {
-      item.classList.add('p-2', 'border-3');
-      const itemTitle = document.createElement('div');
-      itemTitle.classList.add('fw-bold', 'fs-3')
-      if (item.classList.contains('col')) {
-        const itemTitleSubContainer = document.createElement('div');
-        itemTitleSubContainer.classList.add('row');
-
-        const itemSubTitle = document.createElement('div');
-        itemSubTitle.classList.add('col-12');
-        itemSubTitle.textContent = key + ':';
-
-        itemTitleSubContainer.appendChild(itemSubTitle);
-        itemTitle.appendChild(itemTitleSubContainer);
-      } else {
-        itemTitle.classList.add('col-12');
-        itemTitle.textContent = key + ': ';
-      }
-      item.appendChild(itemTitle);
-
-      if (Array.isArray(val)) {
-        if (!val.length) {
-        const  valContent = document.createElement('span');
-        valContent.classList.add('bg-secondary', 'text-light', 'px-2', 'rounded');
-        valContent.textContent = 'NULL';
-        itemTitle.appendChild(valContent);
-        }
-        for (const newKey of val) {
-          if (item.classList.contains('row')) {
-            const subItem = document.createElement('div');
-            subItem.classList.add('col', 'border', 'border-3', 'border-dark', 'rounded');
-            item.appendChild(subItem);
-            displayApiData(newKey, subItem);
-          } else {
-            displayApiData(newKey, item);
-          }
-        }
-      } else {
-        displayApiData(val, item);
-      }
-    } else {
-      const keyText = document.createElement('span');
-      keyText.classList.add('fw-bold');
-      keyText.textContent = key + ' = ';
-
-      let valContent;
-      if (val === null || val === undefined || val === '') {
-        valContent = document.createElement('span');
-        valContent.classList.add('bg-secondary', 'text-light', 'px-2', 'rounded')
-        valContent.textContent = 'NULL';
-      } else if (checkValidUrl(val)) {
-        if (checkValidImg(val)) {
-          valContent = document.createElement('img');
-          valContent.setAttribute('src', val);
-        } else {
-          valContent = document.createElement('a');
-          valContent.setAttribute('href', val);
-          valContent.setAttribute('target', '_blank');
-          valContent.classList.add('link-primary');
-          valContent.textContent = val;
-        }
-      } else {
-        valContent = document.createElement('span');
-        valContent.textContent = val.toString();
-      }
-
-      if (item.classList.contains('row')) {
-        const subItem = document.createElement('div');
-        subItem.classList.add('col');
-        subItem.appendChild(keyText);
-        subItem.appendChild(valContent);
-        item.appendChild(subItem);
-      } else {
-        item.appendChild(keyText);
-        item.appendChild(valContent);
-      }
-    }
-  }
 }
 
 function removeAllContent() {
