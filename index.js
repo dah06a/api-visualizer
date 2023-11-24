@@ -80,8 +80,7 @@ function displayApiList(e) {
 }
 
 async function fetchApi(e) {
-  //REMOVE THIS IF STATEMENT AFTER TESTING
-  if (e) e.preventDefault();
+  e.preventDefault();
   setLoadingStatus();
   removeAllContent();
 
@@ -188,12 +187,12 @@ function checkValidImg(url) {
 function displayApiData(data, parentContainer) {
   for (const [key, val] of Object.entries(data)) {
     const item = document.createElement('div');
-    item.classList.add('border', 'rounded', 'm-2');
+    item.classList.add('border', 'border-dark', 'rounded', 'm-2', 'bg-dark-subtle');
     item.classList.add(parentContainer.classList.contains('row') ? 'col' : 'row');
     parentContainer.appendChild(item);
 
     if (val && typeof val === 'object') {
-      item.classList.add('p-2', 'border-2');
+      item.classList.add('p-2', 'border-3');
       const itemTitle = document.createElement('div');
       itemTitle.classList.add('fw-bold', 'fs-3')
       if (item.classList.contains('col')) {
@@ -208,15 +207,21 @@ function displayApiData(data, parentContainer) {
         itemTitle.appendChild(itemTitleSubContainer);
       } else {
         itemTitle.classList.add('col-12');
-        itemTitle.textContent = key + ':';
+        itemTitle.textContent = key + ': ';
       }
       item.appendChild(itemTitle);
 
       if (Array.isArray(val)) {
+        if (!val.length) {
+        const  valContent = document.createElement('span');
+        valContent.classList.add('bg-secondary', 'text-light', 'px-2', 'rounded');
+        valContent.textContent = 'NULL';
+        itemTitle.appendChild(valContent);
+        }
         for (const newKey of val) {
           if (item.classList.contains('row')) {
             const subItem = document.createElement('div');
-            subItem.classList.add('col', 'border', 'rounded');
+            subItem.classList.add('col', 'border', 'border-3', 'border-dark', 'rounded');
             item.appendChild(subItem);
             displayApiData(newKey, subItem);
           } else {
@@ -229,13 +234,13 @@ function displayApiData(data, parentContainer) {
     } else {
       const keyText = document.createElement('span');
       keyText.classList.add('fw-bold');
-      keyText.textContent = key + '= ';
+      keyText.textContent = key + ' = ';
 
       let valContent;
-      if (val === null || val === undefined) {
+      if (val === null || val === undefined || val === '') {
         valContent = document.createElement('span');
-        valContent.classList.add('bg-light', 'text-dark', 'px-2', 'rounded')
-        valContent.textContent = 'null';
+        valContent.classList.add('bg-secondary', 'text-light', 'px-2', 'rounded')
+        valContent.textContent = 'NULL';
       } else if (checkValidUrl(val)) {
         if (checkValidImg(val)) {
           valContent = document.createElement('img');
@@ -244,13 +249,13 @@ function displayApiData(data, parentContainer) {
           valContent = document.createElement('a');
           valContent.setAttribute('href', val);
           valContent.setAttribute('target', '_blank');
+          valContent.classList.add('link-primary');
           valContent.textContent = val;
         }
       } else {
         valContent = document.createElement('span');
         valContent.textContent = val.toString();
       }
-
 
       if (item.classList.contains('row')) {
         const subItem = document.createElement('div');
@@ -271,6 +276,3 @@ function removeAllContent() {
     contentArea.firstChild.remove();
   }
 }
-
-document.querySelector('#apiUrl').value = 'https://pokeapi.co/api/v2/pokemon/1';
-fetchApi();
