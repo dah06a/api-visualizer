@@ -213,11 +213,12 @@ function displayApiData(data, parentContainer) {
         // Handle row/col nesting for non-object case
         if (item.classList.contains('row')) {
           const subItem = document.createElement('div');
-          subItem.classList.add('col');
+          subItem.classList.add('col', 'text-break', 'text-wrap');
           subItem.appendChild(keyText);
           subItem.appendChild(valContent);
           item.appendChild(subItem);
         } else {
+          item.classList.add('text-break', 'text-wrap');
           item.appendChild(keyText);
           item.appendChild(valContent);
         }
